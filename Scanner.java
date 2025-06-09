@@ -102,7 +102,7 @@ class Scanner {
         while (isDigit(peek())) advance();
         }
 
-        addToken(NUMBER,
+        addToken(TokenType.NUMBER,
             Double.parseDouble(source.substring(start, current)));
     }
 
@@ -122,7 +122,7 @@ class Scanner {
 
         // Trim the surrounding quotes.
         String value = source.substring(start + 1, current - 1);
-        addToken(STRING, value);
+        addToken(TokenType.STRING, value);
     }
 
     private boolean match(char expected) {

@@ -3,8 +3,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.craftinginterpreters.lox.TokenType.*;
-
 class Scanner {
     private final String source;
     private final List<Token> tokens = new ArrayList<>();
@@ -24,7 +22,7 @@ class Scanner {
             scanToken();
         }
 
-        tokens.add(new Token(EOF, "", null, line));
+        tokens.add(new Token(TokenType.EOF, "", null, line));
         return tokens;
     }
 
@@ -48,26 +46,26 @@ class Scanner {
     private void scanToken() {
         char c = advance();
         switch (c) {
-        case '(': addToken(LEFT_PAREN); break;
-        case ')': addToken(RIGHT_PAREN); break;
-        case '{': addToken(LEFT_BRACE); break;
-        case '}': addToken(RIGHT_BRACE); break;
-        case ',': addToken(COMMA); break;
-        case '.': addToken(DOT); break;
-        case '-': addToken(MINUS); break;
-        case '+': addToken(PLUS); break;
-        case ';': addToken(SEMICOLON); break;
-        case '*': addToken(STAR); break;
-        case '!': addToken(match('=') ? BANG_EQUAL : BANG); break;
-        case '=': addToken(match('=') ? EQUAL_EQUAL : EQUAL); break;
-        case '<': addToken(match('=') ? LESS_EQUAL : LESS); break;
-        case '>': addToken(match('=') ? GREATER_EQUAL : GREATER); break;
+        case '(': addToken(TokenType.LEFT_PAREN); break;
+        case ')': addToken(TokenType.RIGHT_PAREN); break;
+        case '{': addToken(TokenType.LEFT_BRACE); break;
+        case '}': addToken(TokenType.RIGHT_BRACE); break;
+        case ',': addToken(TokenType.COMMA); break;
+        case '.': addToken(TokenType.DOT); break;
+        case '-': addToken(TokenType.MINUS); break;
+        case '+': addToken(TokenType.PLUS); break;
+        case ';': addToken(TokenType.SEMICOLON); break;
+        case '*': addToken(TokenType.STAR); break;
+        case '!': addToken(match('=') ? TokenType.BANG_EQUAL : TokenType.BANG); break;
+        case '=': addToken(match('=') ? TokenType.EQUAL_EQUAL : TokenType.EQUAL); break;
+        case '<': addToken(match('=') ? TokenType.LESS_EQUAL : TokenType.LESS); break;
+        case '>': addToken(match('=') ? TokenType.GREATER_EQUAL : TokenType.GREATER); break;
         case '/':
             if (match('/')) {
             // A comment goes until the end of the line.
             while (peek() != '\n' && !isAtEnd()) advance();
             } else {
-            addToken(SLASH);
+            addToken(TokenType.SLASH);
             }
             break;
 

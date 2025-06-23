@@ -8,6 +8,15 @@ class Parser {
     Parser(List<Token> tokens) {
         this.tokens = tokens;
     }
+
+    Expr parse() {
+        try {
+        return expression();
+        } catch (ParseError error) {
+        return null;
+        }
+    }
+    
     private Expr expression() {
         return equality();
     }
@@ -79,6 +88,8 @@ class Parser {
             consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.");
             return new Expr.Grouping(expr);
         }
+
+        throw error(peek(), "Expect expression.");
     }
 
     private boolean match(TokenType... types) {

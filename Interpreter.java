@@ -28,6 +28,15 @@ class Interpreter implements Expr.Visitor<Object> {
         return true;
     }
 
+    private boolean isEqual(Object a, Object b) {
+        if (a == null && b == null)
+            return true;
+        if (a == null)
+            return false;
+
+        return a.equals(b);
+    }
+
     @Override
     public Object visitGroupingExpr(Expr.Grouping expr) {
         return evaluate(expr.expression);
@@ -61,12 +70,15 @@ class Interpreter implements Expr.Visitor<Object> {
                 if (left instanceof String && right instanceof String) {
                     return (String) left + (String) right;
                 }
-
                 break;
             case SLASH:
                 return (double) left / (double) right;
             case STAR:
                 return (double) left * (double) right;
+            case BANG_EQUAL:
+                return !isEqual(left, right);
+            case EQUAL_EQUAL:
+                return isEqual(left, right);
         }
 
         // Unreachable.

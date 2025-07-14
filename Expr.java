@@ -4,6 +4,8 @@ public abstract class Expr {
 
         Void visitPrintStmt(Stmt.Print stmt);
 
+        R visitAssignExpr(Assign expr);
+
         R visitBinaryExpr(Binary expr);
 
         R visitGroupingExpr(Grouping expr);
@@ -73,6 +75,21 @@ public abstract class Expr {
 
         public final Token operator;
         public final Expr right;
+    }
+
+    public static class Assign extends Expr {
+        public Assign(Token name, Expr value) {
+            this.name = name;
+            this.value = value;
+        }
+
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitAssignExpr(this);
+        }
+
+        public final Token name;
+        public final Expr value;
     }
 
     public static class Variable extends Expr {

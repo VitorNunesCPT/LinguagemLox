@@ -1,5 +1,9 @@
 public abstract class Expr {
     public interface Visitor<R> {
+        Void visitExpressionStmt(Stmt.Expression stmt);
+
+        Void visitPrintStmt(Stmt.Print stmt);
+
         R visitBinaryExpr(Binary expr);
 
         R visitGroupingExpr(Grouping expr);

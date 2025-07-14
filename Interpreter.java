@@ -26,6 +26,8 @@ class Interpreter implements Expr.Visitor<Object>,
             case MINUS:
                 checkNumberOperand(expr.operator, right);
                 return -(double) right;
+            default:
+                break;
         }
 
         // Unreachable.
@@ -33,7 +35,7 @@ class Interpreter implements Expr.Visitor<Object>,
     }
     @Override
     public Object visitVariableExpr(Expr.Variable expr) {
-        return null;
+        return environment.get(expr.name);
     }
 
     private void checkNumberOperand(Token operator, Object operand) {
@@ -85,6 +87,24 @@ class Interpreter implements Expr.Visitor<Object>,
     }
     private void execute(Stmt stmt) {
         stmt.accept(this);
+    }
+    void executeBlock(List<Stmt> statements,
+                      Environment environment) {
+        Environment previous = this.environment;
+        try {
+            this.environment = environment;
+
+            for (Stmt statement : statements) {
+                execute(statement);
+            }
+        } finally {
+            this.environment = previous;
+        }
+  }
+    @Override
+    public Void visitBlockStmt(Stmt.Block stmt) {
+        executeBlock(stmt.statements, new Environment(environment));
+        return null;
     }
     @Override
     public Void visitExpressionStmt(Stmt.Expression stmt) {
@@ -155,6 +175,8 @@ class Interpreter implements Expr.Visitor<Object>,
                 return !isEqual(left, right);
             case EQUAL_EQUAL:
                 return isEqual(left, right);
+            default:
+                break;
         }
 
         // Unreachable.

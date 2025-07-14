@@ -43,19 +43,19 @@ class Parser {
     }
 
     private Stmt forStatement() {
-        consume(LEFT_PAREN, "Expect '(' after 'for'.");
+        consume(TokenType.LEFT_PAREN, "Expect '(' after 'for'.");
 
         // More here...
     }
 
     private Stmt ifStatement() {
-        consume(LEFT_PAREN, "Expect '(' after 'if'.");
+        consume(TokenType.LEFT_PAREN, "Expect '(' after 'if'.");
         Expr condition = expression();
-        consume(RIGHT_PAREN, "Expect ')' after if condition."); 
+        consume(TokenType.RIGHT_PAREN, "Expect ')' after if condition."); 
 
         Stmt thenBranch = statement();
         Stmt elseBranch = null;
-        if (match(ELSE)) {
+        if (match(TokenType.ELSE)) {
         elseBranch = statement();
         }
 
@@ -80,9 +80,9 @@ class Parser {
     }
   
     private Stmt whileStatement() {
-        consume(LEFT_PAREN, "Expect '(' after 'while'.");
+        consume(TokenType.LEFT_PAREN, "Expect '(' after 'while'.");
         Expr condition = expression();
-        consume(RIGHT_PAREN, "Expect ')' after condition.");
+        consume(TokenType.RIGHT_PAREN, "Expect ')' after condition.");
         Stmt body = statement();
 
         return new Stmt.While(condition, body);
@@ -124,7 +124,7 @@ class Parser {
     private Expr or() {
         Expr expr = and();
 
-        while (match(OR)) {
+        while (match(TokenType.OR)) {
         Token operator = previous();
         Expr right = and();
         expr = new Expr.Logical(expr, operator, right);
@@ -136,7 +136,7 @@ class Parser {
     private Expr and() {
         Expr expr = equality();
 
-        while (match(AND)) {
+        while (match(TokenType.AND)) {
         Token operator = previous();
         Expr right = equality();
         expr = new Expr.Logical(expr, operator, right);

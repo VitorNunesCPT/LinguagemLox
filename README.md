@@ -4,7 +4,7 @@ Reconhecimentos e Direitos Autorais
 
 @contato:
 
-@data última versão: 30 / 06 / 2025
+@data última versão: 14 / 07 / 2025
 
 @versão: 1.0
 

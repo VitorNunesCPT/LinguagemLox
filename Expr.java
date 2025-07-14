@@ -12,6 +12,8 @@ public abstract class Expr {
 
         R visitLiteralExpr(Literal expr);
 
+        R visitLogicalExpr(Logical expr);
+
         R visitUnaryExpr(Unary expr);
 
         R visitVariableExpr(Variable expr);
@@ -70,8 +72,8 @@ public abstract class Expr {
         }
 
         @Override
-        <R> R accept(Visitor<R> visitor) {
-        return visitor.visitLogicalExpr(this);
+        public <R> R accept(Visitor<R> visitor) {
+            return visitor.visitLogicalExpr(this);
         }
 
         final Expr left;

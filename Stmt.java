@@ -4,6 +4,8 @@ abstract class Stmt {
     R visitExpressionStmt(Expression stmt);
     R visitPrintStmt(Print stmt);
     R visitVarStmt(Var stmt);
+    R visitWhileStmt(While stmt);
+    R visitIfStmt(If stmt);
   }
   static class Block extends Stmt {
     Block(java.util.List<Stmt> statements) {

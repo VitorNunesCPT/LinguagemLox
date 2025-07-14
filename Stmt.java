@@ -1,10 +1,21 @@
 abstract class Stmt {
   interface Visitor<R> {
+    R visitBlockStmt(Block stmt);
     R visitExpressionStmt(Expression stmt);
     R visitPrintStmt(Print stmt);
     R visitVarStmt(Var stmt);
+  }
+  static class Block extends Stmt {
+    Block(java.util.List<Stmt> statements) {
+      this.statements = statements;
+    }
 
-    Object visitAssignExpr(Expr.Assign expr);
+    @Override
+    <R> R accept(Visitor<R> visitor) {
+      return visitor.visitBlockStmt(this);
+    }
+
+    final java.util.List<Stmt> statements;
   }
   static class Expression extends Stmt {
     Expression(Expr expression) {

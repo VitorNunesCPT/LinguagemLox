@@ -3,6 +3,8 @@ abstract class Stmt {
     R visitExpressionStmt(Expression stmt);
     R visitPrintStmt(Print stmt);
     R visitVarStmt(Var stmt);
+
+    Object visitAssignExpr(Expr.Assign expr);
   }
   static class Expression extends Stmt {
     Expression(Expr expression) {

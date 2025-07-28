@@ -1,15 +1,19 @@
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
+
 
 class Interpreter implements Expr.Visitor<Object>,
         Stmt.Visitor<Void> {
-    private Environment environment = new Environment();
+    final Environment globals = new Environment();
+    private Environment environment = globals;
     private final Map<Expr, Integer> locals = new HashMap<>();
 
     void resolve(Expr expr, int depth) {
         locals.put(expr, depth);
     }
+
     void interpret(List<Stmt> statements) {
         try {
             for (Stmt statement : statements) {
@@ -19,6 +23,7 @@ class Interpreter implements Expr.Visitor<Object>,
             Lox.runtimeError(error);
         }
     }
+    
     @Override
     public Object visitLiteralExpr(Expr.Literal expr) {
         return expr.value;
@@ -41,9 +46,19 @@ class Interpreter implements Expr.Visitor<Object>,
         // Unreachable.
         return null;
     }
+
     @Override
     public Object visitVariableExpr(Expr.Variable expr) {
-        return environment.get(expr.name);
+        return lookUpVariable(expr.name, expr);
+    }
+
+    private Object lookUpVariable(Token name, Expr expr) {
+        Integer distance = locals.get(expr);
+        if (distance != null) {
+            return environment.getAt(distance, name.lexeme);
+        } else {
+            return globals.get(name);
+        }
     }
 
     private void checkNumberOperand(Token operator, Object operand) {
@@ -138,12 +153,14 @@ class Interpreter implements Expr.Visitor<Object>,
         evaluate(stmt.expression);
         return null;
     }
+    
     @Override
     public Void visitPrintStmt(Stmt.Print stmt) {
         Object value = evaluate(stmt.expression);
         System.out.println(stringify(value));
         return null;
     }
+    
     @Override
     public Void visitVarStmt(Stmt.Var stmt) {
         Object value = null;
@@ -191,7 +208,16 @@ class Interpreter implements Expr.Visitor<Object>,
     @Override
     public Object visitAssignExpr(Expr.Assign expr) {
         Object value = evaluate(expr.value);
+        
+        Integer distance = locals.get(expr);
+        if (distance != null) {
+            environment.assignAt(distance, expr.name, value);
+        } else {
+            globals.assign(expr.name, value);
+        }
+
         environment.assign(expr.name, value);
+        
         return value;
     }
 
@@ -205,7 +231,8 @@ class Interpreter implements Expr.Visitor<Object>,
         }
 
         if (!(callee instanceof LoxCallable)) {
-            throw new RuntimeError(expr.paren, "Can only call functions and classes.");
+            throw new RuntimeError(expr.paren,
+             "Can only call functions and classes.");
         }
 
         LoxCallable function = (LoxCallable)callee;

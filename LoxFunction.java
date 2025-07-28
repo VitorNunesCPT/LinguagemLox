@@ -3,6 +3,7 @@ import java.util.List;
 class LoxFunction implements LoxCallable {
     private final Stmt.Function declaration;
     private final Environment closure;
+    
     private final boolean isInitializer;
 
     LoxFunction(Stmt.Function declaration, Environment closure,

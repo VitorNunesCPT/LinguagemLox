@@ -214,9 +214,7 @@ class Interpreter implements Expr.Visitor<Object>,
         } else {
             globals.assign(expr.name, value);
         }
-
-        environment.assign(expr.name, value);
-        
+     
         return value;
     }
 

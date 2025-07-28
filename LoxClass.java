@@ -12,6 +12,7 @@ class LoxClass implements LoxCallable {
     public String toString() {
         return name;
     }
+    
     @Override
     public Object call(Interpreter interpreter,
                        List<Object> arguments) {

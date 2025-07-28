@@ -22,6 +22,7 @@ class Parser {
     private Expr expression() {
         return assignment();
     }
+    
     private Stmt declaration() {
         try {
             if (match(TokenType.CLASS)) return classDeclaration();
@@ -37,6 +38,18 @@ class Parser {
 
     private Stmt classDeclaration() {
         Token name = consume(TokenType.IDENTIFIER, "Expect class name.");
+        
+        // Problema anterior: O construtor de Stmt.Class exige um terceiro parâmetro (Expr.Variable superclass)
+        // para representar a superclasse (caso a classe use herança). No entanto, o método classDeclaration()
+        // no Parser não estava fornecendo esse parâmetro, o que poderia causar erros ao tentar acessar ou manipular a superclasse.
+       
+        // Verifica se há uma superclasse
+        Expr.Variable superclass = null;
+        if (match(TokenType.LESS)) {
+            consume(TokenType.IDENTIFIER, "Expect superclass name.");
+            superclass = new Expr.Variable(previous());
+        }
+
         consume(TokenType.LEFT_BRACE, "Expect '{' before class body.");
 
         List<Stmt.Function> methods = new ArrayList<>();
@@ -46,11 +59,15 @@ class Parser {
 
         consume(TokenType.RIGHT_BRACE, "Expect '}' after class body.");
 
-        return new Stmt.Class(name, methods);
+        // Agora o construtor de Stmt.Class recebe o parâmetro superclass corretamente.
+        return new Stmt.Class(name, superclass, methods);
     }
+
+    
     
     private Stmt statement() {
         if (match(TokenType.PRINT)) return printStatement();
+        if (match(TokenType.RETURN)) return returnStatement();
         if (match(TokenType.LEFT_BRACE)) return new Stmt.Block(block());
         return expressionStatement();
     }
@@ -59,6 +76,17 @@ class Parser {
         Expr value = expression();
         consume(TokenType.SEMICOLON, "Expect ';' after value.");
         return new Stmt.Print(value);
+    }
+
+    private Stmt returnStatement() {
+        Token keyword = previous();
+        Expr value = null;
+        if (!check(TokenType.SEMICOLON)) {
+        value = expression();
+        }
+
+        consume(TokenType.SEMICOLON, "Expect ';' after return value.");
+        return new Stmt.Return(keyword, value);
     }
 
     private Stmt varDeclaration() {
@@ -77,6 +105,31 @@ class Parser {
         Expr expr = expression();
         consume(TokenType.SEMICOLON, "Expect ';' after expression.");
         return new Stmt.Expression(expr);
+    }
+
+    private Stmt.Function function(String kind) {
+        Token name = consume(TokenType.IDENTIFIER, "Expect " + kind + " name.");
+
+        consume(TokenType.LEFT_PAREN, "Expect '(' after " + kind + " name.");
+        List<Token> parameters = new ArrayList<>();
+        if (!check(TokenType.RIGHT_PAREN)) {
+        do {
+            if (parameters.size() >= 255) {
+            error(peek(), "Can't have more than 255 parameters.");
+            }
+
+            parameters.add(
+                consume(TokenType.IDENTIFIER, "Expect parameter name."));
+        } while (match(TokenType.COMMA));
+        }
+
+        consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters.");
+
+            
+        consume(TokenType.LEFT_BRACE, "Expect '{' before " + kind + " body.");
+        List<Stmt> body = block();
+
+        return new Stmt.Function(name, parameters, body);
     }
 
     private List<Stmt> block() {
@@ -152,7 +205,7 @@ class Parser {
             expr = new Expr.Binary(expr, operator, right);
         }
 
-        return expr;
+        return call();
     }
 
     private Expr unary() {
@@ -163,6 +216,23 @@ class Parser {
         }
 
         return call();
+    }
+
+    private Expr finishCall(Expr callee) {
+        List<Expr> arguments = new ArrayList<>();
+        if (!check(TokenType.RIGHT_PAREN)) {
+        do {
+            if (arguments.size() >= 255) {
+                error(peek(), "Can't have more than 255 arguments.");
+            }
+            arguments.add(expression());
+        } while (match(TokenType.COMMA));
+        }
+
+        Token paren = consume(TokenType.RIGHT_PAREN,
+                            "Expect ')' after arguments.");
+
+        return new Expr.Call(callee, paren, arguments);
     }
 
     private Expr call() {
@@ -184,6 +254,7 @@ class Parser {
 
         return expr;
     }
+
     private Expr primary() {
         if (match(TokenType.FALSE)) return new Expr.Literal(false);
         if (match(TokenType.TRUE)) return new Expr.Literal(true);

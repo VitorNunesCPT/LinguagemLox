@@ -114,11 +114,13 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
         currentClass = enclosingClass;
         return null;
     }
+
     @Override
     public Void visitExpressionStmt(Stmt.Expression stmt) {
         resolve(stmt.expression);
         return null;
     }
+
     @Override
     public Void visitFunctionStmt(Stmt.Function stmt) {
         declare(stmt.name);
@@ -127,6 +129,7 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
         resolveFunction(stmt, FunctionType.FUNCTION);
         return null;
     }
+
     @Override
     public Void visitIfStmt(Stmt.If stmt) {
         resolve(stmt.condition);
@@ -144,6 +147,7 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
         if (currentFunction == FunctionType.NONE) {
             Lox.error(stmt.keyword, "Can't return from top-level code.");
         }
+
         if (stmt.value != null) {
             if (currentFunction == FunctionType.INITIALIZER) {
                 Lox.error(stmt.keyword,
@@ -155,6 +159,7 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
 
         return null;
     }
+
     @Override
     public Void visitVarStmt(Stmt.Var stmt) {
         declare(stmt.name);
@@ -164,12 +169,14 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
         define(stmt.name);
         return null;
     }
+
     @Override
     public Void visitWhileStmt(Stmt.While stmt) {
         resolve(stmt.condition);
         resolve(stmt.body);
         return null;
     }
+
     @Override
     public Void visitAssignExpr(Expr.Assign expr) {
         resolve(expr.value);
@@ -218,10 +225,12 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
         resolve(expr.expression);
         return null;
     }
+
     @Override
     public Void visitLiteralExpr(Expr.Literal expr) {
         return null;
     }
+
     @Override
     public Void visitLogicalExpr(Expr.Logical expr) {
         resolve(expr.left);
@@ -253,9 +262,11 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
         resolveLocal(expr, expr.name);
         return null;
     }
+
     private void resolve(Stmt stmt) {
         stmt.accept(this);
     }
+
     private void resolve(Expr expr) {
         expr.accept(this);
     }

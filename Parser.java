@@ -24,8 +24,8 @@ class Parser {
     }
     private Stmt declaration() {
         try {
-            if (match(CLASS)) return classDeclaration();
-            if (match(FUN)) return function("function");
+            if (match(TokenType.CLASS)) return classDeclaration();
+            if (match(TokenType.FUN)) return function("function");
             if (match(TokenType.VAR)) return varDeclaration();
 
             return statement();
@@ -35,15 +35,15 @@ class Parser {
         }
     }
     private Stmt classDeclaration() {
-        Token name = consume(IDENTIFIER, "Expect class name.");
-        consume(LEFT_BRACE, "Expect '{' before class body.");
+        Token name = consume(TokenType.IDENTIFIER, "Expect class name.");
+        consume(TokenType.LEFT_BRACE, "Expect '{' before class body.");
 
         List<Stmt.Function> methods = new ArrayList<>();
-        while (!check(RIGHT_BRACE) && !isAtEnd()) {
+        while (!check(TokenType.RIGHT_BRACE) && !isAtEnd()) {
             methods.add(function("method"));
         }
 
-        consume(RIGHT_BRACE, "Expect '}' after class body.");
+        consume(TokenType.RIGHT_BRACE, "Expect '}' after class body.");
 
         return new Stmt.Class(name, methods);
     }
@@ -158,11 +158,11 @@ class Parser {
         Expr expr = primary();
 
         while (true) {
-            if (match(LEFT_PAREN)) {
+            if (match(TokenType.LEFT_PAREN)) {
                 expr = finishCall(expr);
             }
-            else if (match(DOT)) {
-                Token name = consume(IDENTIFIER,
+            else if (match(TokenType.DOT)) {
+                Token name = consume(TokenType.IDENTIFIER,
                         "Expect property name after '.'.");
                 expr = new Expr.Get(expr, name);
             }

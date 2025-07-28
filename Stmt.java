@@ -12,9 +12,8 @@ abstract class Stmt {
     R visitWhileStmt(While stmt);
     R visitClassStmt(Class stmt);
 
-  
-
   }
+
   static class Block extends Stmt {
     Block(java.util.List<Stmt> statements) {
       this.statements = statements;
@@ -93,6 +92,7 @@ abstract class Stmt {
     final Stmt thenBranch;
     final Stmt elseBranch;
   }
+  
   static class Print extends Stmt {
     Print(Expr expression) {
       this.expression = expression;
@@ -105,6 +105,7 @@ abstract class Stmt {
 
     final Expr expression;
   }
+
   static class Return extends Stmt {
     Return(Token keyword, Expr value) {
       this.keyword = keyword;
@@ -119,6 +120,7 @@ abstract class Stmt {
     final Token keyword;
     final Expr value;
   }
+ 
   static class Var extends Stmt {
     Var(Token name, Expr initializer) {
       this.name = name;
@@ -133,6 +135,7 @@ abstract class Stmt {
     final Token name;
     final Expr initializer;
   }
+ 
   static class While extends Stmt {
     While(Expr condition, Stmt body) {
       this.condition = condition;

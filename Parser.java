@@ -38,6 +38,18 @@ class Parser {
 
     private Stmt classDeclaration() {
         Token name = consume(TokenType.IDENTIFIER, "Expect class name.");
+        
+        // Problema anterior: O construtor de Stmt.Class exige um terceiro parâmetro (Expr.Variable superclass)
+        // para representar a superclasse (caso a classe use herança). No entanto, o método classDeclaration()
+        // no Parser não estava fornecendo esse parâmetro, o que poderia causar erros ao tentar acessar ou manipular a superclasse.
+       
+        // Verifica se há uma superclasse
+        Expr.Variable superclass = null;
+        if (match(TokenType.LESS)) {
+            consume(TokenType.IDENTIFIER, "Expect superclass name.");
+            superclass = new Expr.Variable(previous());
+        }
+
         consume(TokenType.LEFT_BRACE, "Expect '{' before class body.");
 
         List<Stmt.Function> methods = new ArrayList<>();
@@ -47,7 +59,8 @@ class Parser {
 
         consume(TokenType.RIGHT_BRACE, "Expect '}' after class body.");
 
-        return new Stmt.Class(name, methods);
+        // Agora o construtor de Stmt.Class recebe o parâmetro superclass corretamente.
+        return new Stmt.Class(name, superclass, methods);
     }
 
     

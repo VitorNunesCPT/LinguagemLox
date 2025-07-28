@@ -68,13 +68,6 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
         endScope();
         return null;
     }
-    @Override
-    public Void visitClassStmt(Stmt.Class stmt) {
-        environment.define(stmt.name.lexeme, null);
-        LoxClass klass = new LoxClass(stmt.name.lexeme);
-        environment.assign(stmt.name, klass);
-        return null;
-    }
 
     @Override
     public Void visitClassStmt(Stmt.Class stmt) {
@@ -143,12 +136,14 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
         resolveLocal(expr, expr.name);
         return null;
     }
+
     @Override
     public Void visitBinaryExpr(Expr.Binary expr) {
         resolve(expr.left);
         resolve(expr.right);
         return null;
     }
+
     @Override
     public Void visitCallExpr(Expr.Call expr) {
         resolve(expr.callee);
@@ -159,11 +154,13 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
 
         return null;
     }
+
     @Override
     public Void visitGetExpr(Expr.Get expr) {
         resolve(expr.object);
         return null;
     }
+
     @Override
     public Void visitGroupingExpr(Expr.Grouping expr) {
         resolve(expr.expression);
@@ -179,12 +176,14 @@ class Resolver implements Expr.Visitor<Void>, Stmt.Visitor<Void> {
         resolve(expr.right);
         return null;
     }
+
     @Override
     public Void visitSetExpr(Expr.Set expr) {
         resolve(expr.value);
         resolve(expr.object);
         return null;
     }
+    
     @Override
     public Void visitUnaryExpr(Expr.Unary expr) {
         resolve(expr.right);

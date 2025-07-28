@@ -34,6 +34,7 @@ class Parser {
             return null;
         }
     }
+
     private Stmt classDeclaration() {
         Token name = consume(TokenType.IDENTIFIER, "Expect class name.");
         consume(TokenType.LEFT_BRACE, "Expect '{' before class body.");
@@ -47,6 +48,7 @@ class Parser {
 
         return new Stmt.Class(name, methods);
     }
+    
     private Stmt statement() {
         if (match(TokenType.PRINT)) return printStatement();
         if (match(TokenType.LEFT_BRACE)) return new Stmt.Block(block());
@@ -69,11 +71,13 @@ class Parser {
         consume(TokenType.SEMICOLON, "Expect ';' after variable declaration.");
         return new Stmt.Var(name, initializer);
     }
+
     private Stmt expressionStatement() {
         Expr expr = expression();
         consume(TokenType.SEMICOLON, "Expect ';' after expression.");
         return new Stmt.Expression(expr);
     }
+
     private List<Stmt> block() {
         List<Stmt> statements = new ArrayList<>();
 
@@ -84,6 +88,7 @@ class Parser {
         consume(TokenType.RIGHT_BRACE, "Expect '}' after block.");
         return statements;
     }
+
     private Expr assignment() {
         Expr expr = equality();
 
@@ -94,6 +99,9 @@ class Parser {
             if (expr instanceof Expr.Variable) {
                 Token name = ((Expr.Variable)expr).name;
                 return new Expr.Assign(name, value);
+              } else if (expr instanceof Expr.Get) {
+                Expr.Get get = (Expr.Get)expr;
+                return new Expr.Set(get.object, get.name, value);
             }
 
             error(equals, "Invalid assignment target.");
@@ -145,6 +153,7 @@ class Parser {
 
         return expr;
     }
+
     private Expr unary() {
         if (match(TokenType.BANG, TokenType.MINUS)) {
             Token operator = previous();
@@ -154,6 +163,7 @@ class Parser {
 
         return call();
     }
+
     private Expr call() {
         Expr expr = primary();
 

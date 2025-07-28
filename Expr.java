@@ -13,6 +13,7 @@ public abstract class Expr {
         R visitVariableExpr(Variable expr);
         R visitGetExpr(Get expr);
         R visitSetExpr(Set expr);
+        R visitThisExpr(This expr);
     }
 
     public abstract <R> R accept(Visitor<R> visitor);
@@ -139,6 +140,19 @@ public abstract class Expr {
         final Expr object;
         final Token name;
         final Expr value;
+    }
+
+    static class This extends Expr {
+        This(Token keyword) {
+        this.keyword = keyword;
+        }
+
+        @Override
+        public <R> R accept(Visitor<R> visitor) {
+        return visitor.visitThisExpr(this);
+        }
+
+        final Token keyword;
     }
 
     public static class Unary extends Expr {

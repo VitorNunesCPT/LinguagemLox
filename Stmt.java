@@ -59,6 +59,7 @@ abstract class Stmt {
 
     final Expr expression;
   }
+
   static class Function extends Stmt {
     Function(Token name, java.util.List<Token> params, java.util.List<Stmt> body) {
       this.name = name;
@@ -75,6 +76,7 @@ abstract class Stmt {
     final java.util.List<Token> params;
     final java.util.List<Stmt> body;
   }
+  
   static class If extends Stmt {
     If(Expr condition, Stmt thenBranch, Stmt elseBranch) {
       this.condition = condition;

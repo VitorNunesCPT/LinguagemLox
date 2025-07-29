@@ -1,0 +1,26 @@
+class Animal {
+    init(nome) {
+        this.nome = nome;
+    }
+
+    falar() {
+        print "Eu sou um animal chamado " + this.nome;
+    }
+
+    dormir() {
+        print this.nome + " está dormindo.";
+    }
+
+    comer(comida) {
+        print this.nome + " está comendo " + comida + ".";
+    }
+}
+
+var a = Animal("Rex");
+var b = Animal("pretinha");
+
+a.falar();
+a.dormir();
+a.comer("ração");
+b.falar();
+b.comer("peixe");

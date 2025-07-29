@@ -1,0 +1,9 @@
+fun fatorial(n) {
+  if (n <= 1) return 1;
+  return n * fatorial(n - 1);
+}
+
+// Chamada da função e impressão do resultado
+var resultado = fatorial(5);
+print "O fatorial de 5 é: ";
+print resultado;
